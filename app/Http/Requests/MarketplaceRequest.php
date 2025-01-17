@@ -14,7 +14,7 @@ class MarketplaceRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:marketplaces,name' . ($this->marketplace ? ',' . $this->marketplace->id : ''),
             'description' => 'required|string',
             'status' => 'required|in:active,inactive',
             // Add other validation rules based on your marketplace fields
