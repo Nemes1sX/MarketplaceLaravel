@@ -3,23 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Marketplace;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\MarketplaceRequest;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Http\Requests\StoreMarketplaceRequest;
+use App\Http\Requests\UpdateMarketplaceRequest;
 
 class MarketplaceController extends Controller
 {
-    use AuthorizesRequests;
-
-    public function __construct()
-    {
-        $this->middleware('auth')->except(['index', 'show']);
-    }
-
     public function index()
     {
-        $marketplaces = Marketplace::latest()->paginate(10);
+        $marketplaces = Marketplace::with('user')
+            ->where('status', 'active')
+            ->latest()
+            ->paginate(12);
+            
         return view('marketplaces.index', compact('marketplaces'));
     }
 
@@ -28,22 +24,18 @@ class MarketplaceController extends Controller
         return view('marketplaces.create');
     }
 
-    public function store(MarketplaceRequest $request)
+    public function store(StoreMarketplaceRequest $request)
     {
-        $validated = $request->validated();
+        $validated['user_id'] = Auth::id();
         
-        $marketplace = new Marketplace($validated);
-        $marketplace->user_id = Auth::id();
-
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('marketplace-images', 'public');
-            $marketplace->image = $path;
+            $validated['image'] = $request->file('image')->store('marketplace-images', 'public');
         }
 
-        $marketplace->save();
+        Marketplace::create($validated);
 
-        return redirect()->route('marketplaces.show', $marketplace)
-            ->with('success', 'Listing created successfully!');
+        return redirect()->route('marketplaces.index')
+            ->with('success', 'Listing created successfully.');
     }
 
     public function show(Marketplace $marketplace)
@@ -53,33 +45,27 @@ class MarketplaceController extends Controller
 
     public function edit(Marketplace $marketplace)
     {
-        $this->authorize('update', $marketplace);
         return view('marketplaces.edit', compact('marketplace'));
     }
 
-    public function update(MarketplaceRequest $request, Marketplace $marketplace)
+    public function update(UpdateMarketplaceRequest $request, Marketplace $marketplace)
     {
-        $this->authorize('update', $marketplace);
-        
-        $validated = $request->validated();
-
+    
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('marketplace-images', 'public');
-            $validated['image'] = $path;
+            $validated['image'] = $request->file('image')->store('marketplace-images', 'public');
         }
 
         $marketplace->update($validated);
 
         return redirect()->route('marketplaces.show', $marketplace)
-            ->with('success', 'Listing updated successfully!');
+            ->with('success', 'Listing updated successfully.');
     }
 
     public function destroy(Marketplace $marketplace)
     {
-        $this->authorize('delete', $marketplace);
         $marketplace->delete();
 
         return redirect()->route('marketplaces.index')
-            ->with('success', 'Listing deleted successfully!');
+            ->with('success', 'Listing deleted successfully.');
     }
 }
