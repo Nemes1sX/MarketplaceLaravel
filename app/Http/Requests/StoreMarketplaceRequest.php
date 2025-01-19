@@ -14,12 +14,12 @@ class StoreMarketplaceRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'slug' => ['required', 'string', 'max:255', 'unique:marketplaces'],
+            'short_description' => ['nullable', 'string', 'max:255'],
             'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'category' => 'required|string|max:100',
-            'location' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'status' => 'required|in:active,inactive',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 } 

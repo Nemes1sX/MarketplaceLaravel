@@ -9,11 +9,14 @@ class MarketplaceFactory extends Factory
 {
     protected $model = Marketplace::class;
 
-    public function definition()
+    public function definition(): array
     {
+        $title = fake()->sentence(3);
         return [
-            'name' => $this->faker->unique()->sentence(3),
-            'description' => $this->faker->paragraphs(3, true),
+            'name' => $title,
+            'slug' => str()->slug($title),
+            'short_description' => fake()->sentence(8),
+            'description' => fake()->paragraphs(3, true),
             'status' => $this->faker->randomElement(['active', 'inactive']),
             'image' => null,
             'user_id' => \App\Models\User::factory()

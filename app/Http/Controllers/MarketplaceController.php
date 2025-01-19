@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Marketplace;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreMarketplaceRequest;
-use App\Http\Requests\UpdateMarketplaceRequest;
+use App\Http\Requests\MarketplaceRequest;   
 
 class MarketplaceController extends Controller
 {
@@ -24,18 +23,18 @@ class MarketplaceController extends Controller
         return view('marketplaces.create');
     }
 
-    public function store(StoreMarketplaceRequest $request)
-    {
-        $validated['user_id'] = Auth::id();
+    public function store(MarketplaceRequest $request)
+    {    
+        $validated = $request->validated();
         
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('marketplace-images', 'public');
         }
 
-        Marketplace::create($validated);
+        auth()->user()->marketplace()->create($validated); 
 
         return redirect()->route('marketplaces.index')
-            ->with('success', 'Listing created successfully.');
+            ->with('success', 'Marketplace created successfully.');
     }
 
     public function show(Marketplace $marketplace)
@@ -48,7 +47,7 @@ class MarketplaceController extends Controller
         return view('marketplaces.edit', compact('marketplace'));
     }
 
-    public function update(UpdateMarketplaceRequest $request, Marketplace $marketplace)
+    public function update(MarketplaceRequest $request, Marketplace $marketplace)
     {
     
         if ($request->hasFile('image')) {
@@ -58,7 +57,7 @@ class MarketplaceController extends Controller
         $marketplace->update($validated);
 
         return redirect()->route('marketplaces.show', $marketplace)
-            ->with('success', 'Listing updated successfully.');
+            ->with('success', 'Marketplace updated successfully.');
     }
 
     public function destroy(Marketplace $marketplace)
@@ -66,6 +65,6 @@ class MarketplaceController extends Controller
         $marketplace->delete();
 
         return redirect()->route('marketplaces.index')
-            ->with('success', 'Listing deleted successfully.');
+            ->with('success', 'Marketplace deleted successfully.');
     }
 }

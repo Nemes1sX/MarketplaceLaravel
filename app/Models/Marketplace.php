@@ -14,7 +14,9 @@ class Marketplace extends Model
         'description',
         'status',
         'image',
-        'user_id'
+        'user_id',
+        'slug',
+        'short_description',
     ];
 
     public function user()

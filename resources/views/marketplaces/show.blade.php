@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-                <div class="p-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
                     @if($marketplace->image)
                         <img src="{{ Storage::url($marketplace->image) }}" 
                              alt="{{ $marketplace->title }}"
@@ -11,17 +11,19 @@
 
                     <div class="flex justify-between items-start">
                         <div>
-                            <h1 class="text-3xl font-bold text-gray-800">{{ $marketplace->title }}</h1>
-                            <p class="text-gray-500 mt-2">Posted by {{ $marketplace->user->name }}</p>
-                        </div>
-                        <div class="text-2xl font-bold text-green-600">
-                            ${{ number_format($marketplace->price, 2) }}
+                            <h1 class="text-2xl font-bold mb-4">{{ $marketplace->title }}</h1>
+                            <p class="text-gray-500 mt-2">Owned by {{ $marketplace->user->name }}</p>
                         </div>
                     </div>
 
-                    <div class="mt-6">
-                        <h2 class="text-xl font-semibold text-gray-800">Description</h2>
-                        <p class="mt-2 text-gray-600">{{ $marketplace->description }}</p>
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold">Short Description</h3>
+                        <p class="text-gray-600">{{ $marketplace->short_description }}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold">Description</h3>
+                        <p class="text-gray-600">{{ $marketplace->description }}</p>
                     </div>
 
                     <div class="mt-6 flex items-center gap-4">
@@ -46,7 +48,7 @@
                                 @method('DELETE')
                                 <button type="submit" 
                                         class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                    Delete Listing
+                                    Delete Marketplace
                                 </button>
                             </form>
                         </div>
