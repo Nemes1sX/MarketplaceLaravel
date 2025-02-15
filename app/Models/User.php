@@ -44,4 +44,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function marketplace()
+    {
+        return $this->hasOne(Marketplace::class);
+    }
 }
