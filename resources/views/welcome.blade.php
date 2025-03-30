@@ -56,20 +56,22 @@
                     <main class="mt-6">
                         <div class="mb-8">
                             <h2 class="text-2xl font-semibold text-black dark:text-white mb-4">Featured Products</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 @foreach($products as $product)
-                                <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg overflow-hidden">
-                                    <img src="{{ $product->image }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
-                                    <div class="p-4">
+                                <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
+                                    <div class="h-48 overflow-hidden">
+                                        <img src="{{ $product->image }}" alt="{{ $product->name }}" class="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105">
+                                    </div>
+                                    <div class="p-4 flex-grow flex flex-col">
                                         <div class="flex justify-between items-start mb-2">
                                             <h3 class="text-lg font-semibold text-black dark:text-white">{{ $product->name }}</h3>
                                             <span class="text-sm text-gray-500 dark:text-gray-400">{{ $product->marketplace->name }}</span>
                                         </div>
                                         <p class="text-xl font-bold text-[#FF2D20] mb-2">${{ number_format($product->price, 2) }}</p>
-                                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">{{ Str::limit($product->description, 100) }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">{{ Str::limit($product->description, 100) }}</p>
                                         <a href="{{ $product->url }}" 
                                            class="block w-full text-center bg-[#FF2D20] text-white py-2 px-4 rounded-md hover:bg-[#FF2D20]/90 transition">
-                                            View on {{ $product->marketplace }}
+                                            View on {{ $product->marketplace->name }}
                                         </a>
                                     </div>
                                 </div>
