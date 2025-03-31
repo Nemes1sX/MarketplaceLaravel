@@ -25,25 +25,20 @@
                         <h3 class="text-lg font-semibold">Description</h3>
                         <p class="text-gray-600">{{ $marketplace->description }}</p>
                     </div>
-
-                    <div class="mt-6 flex items-center gap-4">
-                        <span class="px-3 py-1 bg-gray-100 rounded-full text-gray-600">
-                            {{ $marketplace->category }}
-                        </span>
-                        <span class="text-gray-500">
-                            <i class="fas fa-map-marker-alt"></i> {{ $marketplace->location }}
-                        </span>
-                    </div>
-
+ 
                     @if(Auth::id() === $marketplace->user_id)
                         <div class="mt-8 flex gap-4">
+                            <a href="{{ route('marketplace.products.create', $marketplace)}}"  
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                Create product
+                            </a>
                             <a href="{{ route('marketplaces.edit', $marketplace) }}" 
                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Edit Listing
+                                Edit Marketplace
                             </a>
                             <form action="{{ route('marketplaces.destroy', $marketplace) }}" 
                                   method="POST" 
-                                  onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                                  onsubmit="return confirm('Are you sure you want to delete this marketplace?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" 

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Marketplace;
+use App\Models\Product;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,7 +23,11 @@ class DatabaseSeeder extends Seeder
             // Create one marketplace listing for each user
             Marketplace::factory()->create([
                 'user_id' => $user->id
-            ]);
+            ])->each(function ($marketplace) {
+                Product::factory(25)->create([
+                    'marketplace_id' => $marketplace->id
+                ]);
+            });
         });
     }
 }
