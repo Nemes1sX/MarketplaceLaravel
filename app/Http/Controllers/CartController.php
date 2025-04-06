@@ -23,6 +23,15 @@ class CartController extends Controller
         $quantity = $request->input('quantity', 1);
         $this->cartService->addToCart($product, $quantity);
         
+        if ($request->ajax()) {
+            $cart = $this->cartService->getCart();
+            return response()->json([
+                'success' => true,
+                'message' => 'Product added to cart!',
+                'cartCount' => $cart->getItemCount()
+            ]);
+        }
+        
         return redirect()->back()->with('success', 'Product added to cart!');
     }
 

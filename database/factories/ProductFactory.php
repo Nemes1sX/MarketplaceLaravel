@@ -12,8 +12,11 @@ class ProductFactory extends Factory
 
     public function definition(): array
     {
+        $title = fake()->words(3, true);
+
         return [
-            'name' => fake()->words(3, true),
+            'name' => $title,
+            'slug' => str()->slug($title),
             'description' => fake()->paragraphs(2, true),
             'marketplace_id' => Marketplace::factory(),
             'image' => null,

@@ -9,6 +9,9 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+        
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
         <!-- Styles -->
         <style>
@@ -24,7 +27,19 @@
                             <h1 class="text-3xl font-bold text-black dark:text-white">Global Marketplace</h1>
                         </div>
                         @if (Route::has('login'))
-                            <nav class="-mx-3 flex flex-1 justify-end">
+                            <nav class="-mx-3 flex flex-1 justify-end items-center">
+                                <a href="{{ route('cart.index') }}" class="relative rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white mr-2">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                    @if(session()->has('cart') && count(session('cart')['items'] ?? []) > 0)
+                                        <span class="absolute -top-1 -right-1 bg-[#FF2D20] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center cart-count">
+                                            {{ count(session('cart')['items']) }}
+                                        </span>
+                                    @else
+                                        <span class="absolute -top-1 -right-1 bg-[#FF2D20] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center cart-count hidden">
+                                            0
+                                        </span>
+                                    @endif
+                                </a>
                                 @auth
                                     <a
                                         href="{{ url('/dashboard') }}"
@@ -69,10 +84,26 @@
                                         </div>
                                         <p class="text-xl font-bold text-[#FF2D20] mb-2">${{ number_format($product->price, 2) }}</p>
                                         <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">{{ Str::limit($product->description, 100) }}</p>
-                                        <a href="{{ $product->url }}" 
-                                           class="block w-full text-center bg-[#FF2D20] text-white py-2 px-4 rounded-md hover:bg-[#FF2D20]/90 transition">
-                                            View on {{ $product->marketplace->name }}
-                                        </a>
+                                        <div class="flex gap-2">
+                                            <a href="{{ $product->url }}" 
+                                               class="flex-1 text-center bg-gray-200 dark:bg-zinc-800 text-gray-800 dark:text-white py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-zinc-700 transition">
+                                                <i class="fa-solid fa-eye mr-1"></i> View Details
+                                            </a>
+                                            <form action="{{ route('cart.add', $product) }}" method="POST" class="flex-1 add-to-cart-form">
+                                                @csrf
+                                                <div class="flex flex-col gap-2">
+                                                    <select name="quantity" class="w-full rounded-md border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm">
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            <option value="{{ $i }}">{{ $i }}</option>
+                                                        @endfor
+                                                    </select>
+                                                    <button type="submit" 
+                                                            class="w-full bg-[#FF2D20] text-white py-2 px-4 rounded-md hover:bg-[#FF2D20]/90 transition">
+                                                        <i class="fa-solid fa-cart-plus mr-1"></i> Add to Cart
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                                 @endforeach
@@ -100,4 +131,77 @@
             </div>
         </div>
     </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all add to cart forms
+            const forms = document.querySelectorAll('.add-to-cart-form');
+            
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(this);
+                    const url = this.getAttribute('action');
+                    const button = this.querySelector('button[type="submit"]');
+                    const originalText = button.textContent;
+                    
+                    // Change button text to indicate loading
+                    button.textContent = 'Adding...';
+                    button.disabled = true;
+                    
+                    // Send AJAX request
+                    fetch(url, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update cart count in header
+                        const cartCountElement = document.querySelector('.cart-count');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = data.cartCount;
+                            cartCountElement.classList.remove('hidden');
+                        }
+                        
+                        // Show success message
+                        showNotification('Product added to cart!', 'success');
+                        
+                        // Reset button
+                        button.textContent = originalText;
+                        button.disabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Failed to add product to cart', 'error');
+                        
+                        // Reset button
+                        button.textContent = originalText;
+                        button.disabled = false;
+                    });
+                });
+            });
+            
+            // Function to show notification
+            function showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 px-6 py-3 rounded-md shadow-md z-50 ${
+                    type === 'success' ? 'bg-green-500' : 'bg-red-500'
+                } text-white`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Remove notification after 3 seconds
+                setTimeout(() => {
+                    notification.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 500);
+                }, 3000);
+            }
+        });
+    </script>
 </html>

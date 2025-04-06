@@ -11,7 +11,8 @@ class MarketplaceFactory extends Factory
 
     public function definition(): array
     {
-        $title = fake()->sentence(3);
+        $title = fake()->words(1);
+        
         return [
             'name' => $title,
             'slug' => str()->slug($title),
