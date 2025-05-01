@@ -17,7 +17,7 @@ class ProductFactory extends Factory
         return [
             'name' => $title,
             'slug' => str()->slug($title),
-            'description' => fake()->paragraphs(2, true),
+            'description' => fake()->paragraphs(2, false),
             'marketplace_id' => Marketplace::factory(),
             'image' => null,
             'price' => fake()->randomFloat(2, 10, 1000),
