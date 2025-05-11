@@ -32,6 +32,13 @@ class ProductController extends Controller
             ->route('marketplace.products.index', $marketplace)
             ->with('success', 'Product created successfully.');
     }
+    
+    public function getBySlug(Marketplace $marketplace, string $slug)
+    {
+        $product = Product::where('marketplace_id', $marketplace->id)->where('slug', $slug)->first();
+
+        return view('products.show', compact('marketplace', 'product'));
+    }
 
     public function show(Marketplace $marketplace, Product $product)
     {

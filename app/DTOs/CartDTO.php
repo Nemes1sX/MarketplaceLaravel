@@ -7,16 +7,23 @@ class CartDTO
     public function __construct(
         public array $items = [],
         public ?string $discountCode = null,
-        public ?string $orderId = null
+        public ?string $orderId = null,
+        public ?int $totalQuantity = null,
+        public ?float $totalPrice = null
     ) {}
 
     public static function fromSession(array $sessionData): self
     {
-        return new self(
+        $cart = new self(
             items: $sessionData['items'] ?? [],
             discountCode: $sessionData['discount_code'] ?? null,
             orderId: $sessionData['order_id'] ?? null
         );
+        
+        $cart->totalQuantity = $cart->getTotalQuantity();
+        $cart->totalPrice = $cart->getTotal();
+        
+        return $cart;
     }
 
     public function toArray(): array
@@ -61,6 +68,13 @@ class CartDTO
     {
         return array_reduce($this->items, function ($total, $item) {
             return $total + ($item['price'] * $item['quantity']);
+        }, 0);
+    }
+
+    public function getTotalQuantity(): int
+    {
+        return array_reduce($this->items, function ($total, $item) {
+            return $total + $item['quantity'];
         }, 0);
     }
 

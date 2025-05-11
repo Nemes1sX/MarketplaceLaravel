@@ -85,7 +85,7 @@
                                         <p class="text-xl font-bold text-[#FF2D20] mb-2">${{ number_format($product->price, 2) }}</p>
                                         <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">{{ Str::limit($product->description, 100) }}</p>
                                         <div class="flex gap-2">
-                                            <a href="{{ $product->url }}" 
+                                            <a href="{{ route('marketplaces.products.get', [$product->marketplace, $product->slug]) }}" 
                                                class="flex-1 text-center bg-gray-200 dark:bg-zinc-800 text-gray-800 dark:text-white py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-zinc-700 transition">
                                                 <i class="fa-solid fa-eye mr-1"></i> View Details
                                             </a>

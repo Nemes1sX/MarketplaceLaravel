@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Product;
 use App\Models\Marketplace;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductFactory extends Factory
@@ -12,12 +13,11 @@ class ProductFactory extends Factory
 
     public function definition(): array
     {
-        $title = fake()->words(3, true);
-
+        $name = fake()->words(3, true);
         return [
-            'name' => $title,
-            'slug' => str()->slug($title),
-            'description' => fake()->paragraphs(2, false),
+            'name' => $name,
+            'slug' => Str::slug($name),
+            'description' => fake()->paragraph(),
             'marketplace_id' => Marketplace::factory(),
             'image' => null,
             'price' => fake()->randomFloat(2, 10, 1000),
