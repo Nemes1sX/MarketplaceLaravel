@@ -1,12 +1,14 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ isset($product) ? 'Edit Product' : 'Create New Product' }}
+        </h2>
+    </x-slot>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                        {{ isset($product) ? 'Edit Product' : 'Create New Product' }}
-                    </h2>
-
                     <form action="{{ isset($product) 
                                    ? route('marketplace.products.update', [$marketplace, $product]) 
                                    : route('marketplace.products.store', $marketplace) }}" 
